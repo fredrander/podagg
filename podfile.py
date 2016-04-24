@@ -5,18 +5,18 @@ import podepisode
 from datetime import datetime
 from mimetypes import MimeTypes
 
-
+# download podcast and save with correct name
+# returns full path and name of downloaded file, None if failure
 def download( episode, podName, podPath ):
 
 	tmpFile = _downloadTemp( episode )
 	if tmpFile == None:
-		return False
+		return None
 	
 	fileName = _generateFileName( episode, podName )
 	destFile = os.path.join( podPath, fileName )
 	_moveTemp( tmpFile, destFile )
-	return True
-
+	return destFile
 
 ################################################################################
 

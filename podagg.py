@@ -4,27 +4,39 @@ import history
 import podfile
 import podlist
 import config
+import id3
+import os
 
 
-configFile = ".config"
+configFile = os.path.expanduser( "~/.podagg/config" )
 
 # read config
 cfg = config.getConfig( configFile )
 
-# get all podcast configs
+# get all configured podcasts
 pods = podlist.getPodcasts( cfg.podlist )
 
-# get list os all episodes in pod
-episodes = rssfeed.getPodEpisodes( "http://feeds.serialpodcast.org/serialpodcast" )
-podName = "Serial"
-podPath = "/home/fredrander/Serial/"
-#episodes = rssfeed.getPodEpisodes( "http://api.sr.se/api/rss/pod/3966" )
-if episodes != None:
-	for episode in episodes:
+for pod in pods:
 
-		# check if already handled
-		if history.exist( episode.url, cfg.history ) != True:
-			# no, download
-			if podfile.download( episode, podName, cfg.downloadPath ) == True:
-				# add to history
-				history.add( episode.url, cfg.history )
+	# get list os all episodes in pod
+	episodes = rssfeed.getPodEpisodes( pod.url )
+
+	if episodes != None:
+		for episode in episodes:
+
+			# check if already handled
+			if history.exist( episode.url, cfg.history ) != True:
+				# no, download
+				
+				# append podcast name to download dir. if config separateDirs = True
+				destDir = cfg.downloadPath
+				if cfg.separateDirs:
+					destDir = os.path.join( cfg.downloadPath, pod.name )
+				
+				downloadedFile = podfile.download( episode, pod.name, destDir )
+				if downloadedFile != None:
+					# add to history
+					history.add( episode.url, cfg.history )
+					# update ID3 tags of downloaded file
+					if cfg.updateId3:
+						id3.updateTags( downloadedFile, pod.name )

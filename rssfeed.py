@@ -48,6 +48,7 @@ def _getPodEpisodeTitle( titleElement ):
 			result = child.data
 		elif child.nodeType == minidom.Node.CDATA_SECTION_NODE:
 			result = child.data
+	result = result.strip()
 	return result
 
 def _getPodEpisodePublishedTime( publishedElement ):
