@@ -16,9 +16,29 @@ def download( episode, podName, podPath ):
 	
 	fileName = _generateFileName( episode, podName )
 	destFile = os.path.join( podPath, fileName )
+	print( "Save: {}".format( destFile ) )
 	_moveTemp( tmpFile, destFile )
 	return destFile
 
+# cleanup dir from too many files for a pod
+def cleanupDir( podName, podPath, maxNbOfFiles ):
+	# get pod all files in dir
+	allFiles = os.listdir( podPath )
+	# find files from searched pod
+	podFiles = []
+	for f in allFiles:
+		if re.match( "^{}".format( podName ), f ):
+			podFiles.append( f )
+	# sort descending and delete all files after maxNbOfFiles
+	podFiles.sort( reverse=True )
+	cnt = 0
+	for sf in podFiles:
+		cnt = cnt + 1
+		if cnt > maxNbOfFiles:
+			fileToDelete = os.path.join( podPath, sf )
+			print( "Delete: {}".format( fileToDelete ) )
+			os.remove( fileToDelete )
+	
 ################################################################################
 
 # private functions
@@ -45,7 +65,6 @@ def _downloadTemp( episode ):
 			done = True
 		else:
 			os.write( tmpFile[ 0 ], data )
-			
 	os.close( tmpFile[ 0 ] )
 	return tmpFile[ 1 ]
 
