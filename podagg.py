@@ -6,9 +6,16 @@ import podlist
 import config
 import id3
 import os
+import sys
 
 
+# default config file path
 configFile = os.path.expanduser( "~/.podagg/config" )
+# check if alternate config file in arg
+if len( sys.argv ) > 1:
+	configFile = sys.argv[ 1 ]
+
+print( "Config file: {}".format( configFile ) )
 
 # read config
 cfg = config.getConfig( configFile )
