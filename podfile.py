@@ -2,6 +2,7 @@ import tempfile
 import os
 import urllib2
 import podepisode
+import re
 from datetime import datetime
 from mimetypes import MimeTypes
 
@@ -80,7 +81,9 @@ def _generateFileName( episode, podName ):
 
 	result = None
 	if episode.title != None and len( episode.title ) > 0:
-		result = u"{} {} {}{}".format( podName, dateStr, episode.title, ext )
+		# remove forbidden file name chars. from title
+		titleStr = re.sub( "[\/\*\<\>\:\\\\]", "_", episode.title )
+		result = u"{} {} {}{}".format( podName, dateStr, titleStr, ext )
 	else:
 		result = u"{} {}{}".format( podName, dateStr, ext ) 
 	return result
