@@ -1,5 +1,6 @@
 import tempfile
 import os
+import shutil
 import urllib2
 import podepisode
 import re
@@ -17,7 +18,8 @@ def download( episode, podName, podPath ):
 	fileName = _generateFileName( episode, podName )
 	destFile = os.path.join( podPath, fileName )
 	print( "Save: {}".format( destFile ) )
-	_moveTemp( tmpFile, destFile )
+	if _moveTemp( tmpFile, destFile ) != True:
+		return None
 	return destFile
 
 # cleanup dir from too many files for a pod
@@ -120,4 +122,9 @@ def _moveTemp( tmp, to ):
 	destDir = os.path.split( dest )[ 0 ]
 	if not os.path.isdir( destDir ):
 		os.makedirs( destDir )
-	os.rename( tmp, dest )
+	try:
+		shutil.copy( tmp, dest )
+		os.remove( tmp )
+		return True
+	except:
+		return False
