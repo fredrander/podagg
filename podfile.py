@@ -27,13 +27,8 @@ def download( episode, podName, podPath ):
 
 # cleanup dir from too many files for a pod
 def cleanupDir( podName, podPath, maxNbOfFiles ):
-	# get pod all files in dir
-	allFiles = os.listdir( podPath )
-	# find files from searched pod
-	podFiles = []
-	for f in allFiles:
-		if re.match( u"^{}".format( podName ), f ):
-			podFiles.append( f )
+	# get pod files in dir
+	podFiles = _allFilesFromPodInDir( podPath, podName )
 	# sort descending and delete all files after maxNbOfFiles
 	podFiles.sort( reverse=True )
 	cnt = 0
@@ -44,6 +39,44 @@ def cleanupDir( podName, podPath, maxNbOfFiles ):
 			print( u"Delete: {}".format( fileToDelete ) )
 			os.remove( fileToDelete )
 	
+# update last episode dir. with latest episode for a pod
+def updateLastEpisodeDir( podName, podPath, lastEpisodeDir ):
+
+	# create last episiode dir if missing
+	if not os.path.isdir( lastEpisodeDir ):
+		os.makedirs( lastEpisodeDir )
+
+	# get pod files in dir
+	podFiles = _allFilesFromPodInDir( podPath, podName )
+	# sort descending
+	podFiles.sort( reverse=True )
+
+	if len( podFiles ) < 1:
+		# no files
+		return
+
+	lastSourceFile = podFiles[ 0 ]
+	
+	# get files from pod in last episode dir
+	lastFiles = _allFilesFromPodInDir( lastEpisodeDir, podName )
+	
+	# delete file(s) in last episode dir if not correct file
+	alreadyLatest = False
+	for f in lastFiles:
+		uf = f.decode( "utf-8" )
+		if uf == lastSourceFile:
+			# latest file already in dir
+			alreadyLatest = True
+		else:
+			fileToDelete = os.path.join( lastEpisodeDir, uf )
+			os.remove( fileToDelete )
+	
+	# copy file to last episode dir
+	if alreadyLatest != True:
+		src = os.path.join( podPath, lastSourceFile )
+		dest = os.path.join( lastEpisodeDir, lastSourceFile )
+		shutil.copy( src, dest )
+	
 ################################################################################
 
 # private functions
@@ -53,7 +86,7 @@ def _downloadTemp( episode ):
 	
 	# create a temp file, returns a tuple ( file handle, file name )
 	tmpFile = tempfile.mkstemp()
-	
+
 	# open url	
 	rsp = None
 	try:
@@ -94,9 +127,14 @@ def _generateFileName( episode, podName ):
 	# use published time from RSS feed if exist, otherwise current date
 	if episode.publishedTime != None and len( episode.publishedTime ) > 15:
 		# only interested in date (example of format (RFC822) Sun, 24 Apr 2016 16:03:00 GMT)
-		tmpStr = episode.publishedTime[:16]
-		pubDate = datetime.strptime( tmpStr, "%a, %d %b %Y" )
-	else:
+		try:
+			tmpStr = episode.publishedTime[:16]
+			pubDate = datetime.strptime( tmpStr, "%a, %d %b %Y" )
+		except:
+			# incorrect date format
+			pubDate = None
+
+	if pubDate == None:
 		pubDate = datetime.now()
 
 	dateStr = datetime.strftime( pubDate, "%Y%m%d" ).decode( "utf-8" )
@@ -131,3 +169,16 @@ def _moveTemp( tmp, to ):
 		return True
 	except:
 		return False
+
+def _allFilesFromPodInDir( dir, podName ):
+	podFiles = []
+	if not os.path.isdir( dir ):
+		# dir missing
+		return podFiles
+	# get all files in dir
+	allFiles = os.listdir( dir )
+	# find files from searched pod
+	for f in allFiles:
+		if re.match( u"^{}".format( podName ), f ):
+			podFiles.append( f )
+	return podFiles

@@ -35,7 +35,7 @@ def getPodEpisodes( url ):
 def _getPodEpisodeContentUrl( enclosureElement ):
 	if enclosureElement.hasAttribute( "url" ) == False:
 		return None
-	result = enclosureElement.getAttribute( "url" )
+	result = enclosureElement.getAttribute( "url" ).encode( "utf-8" )
 	return result
 
 def _getPodEpisodeContentType( enclosureElement ):

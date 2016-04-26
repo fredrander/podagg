@@ -6,7 +6,7 @@ from collections import namedtuple
 import os
 
 # named tuple that holds config
-Config = namedtuple( "Config", "podlist history downloadPath separateDirs updateId3" )
+Config = namedtuple( "Config", "podlist history downloadPath separateDirs updateId3 latestEpisodeDir" )
 
 def getConfig( configFile ):
 
@@ -16,6 +16,7 @@ def getConfig( configFile ):
 	downloadPath = "~/podcasts/"
 	separateDirs = True
 	updateId3 = True
+	latestEpisodeDir = None
 	
 	cfgFile = ConfigParser()
 	cfgFile.read( configFile )
@@ -29,12 +30,16 @@ def getConfig( configFile ):
 		separateDirs = cfgFile.getboolean( "paths", "separate_dirs" )
 	if cfgFile.has_option( "misc", "update_id3" ):
 		updateId3 = cfgFile.getboolean( "misc", "update_id3" )
+	if cfgFile.has_option( "paths", "latest_episode_dir" ):
+		latestEpisodeDir = cfgFile.get( "paths", "latest_episode_dir" )
 
-	# expand path to support ~	
+	# expand paths to support ~	
 	podlist = os.path.expanduser( podlist )
 	history = os.path.expanduser( history )
 	downloadPath = os.path.expanduser( downloadPath )
+	if latestEpisodeDir != None:
+		latestEpisodeDir = os.path.expanduser( latestEpisodeDir )
 
-	result = Config( podlist = podlist, history = history, downloadPath = downloadPath, separateDirs = separateDirs, updateId3 = updateId3 )
+	result = Config( podlist = podlist, history = history, downloadPath = downloadPath, separateDirs = separateDirs, updateId3 = updateId3, latestEpisodeDir = latestEpisodeDir )
 
 	return result

@@ -53,3 +53,6 @@ for pod in pods:
 						id3.updateTags( downloadedFile, pod.name )
 	# remove pod files if too many in dir					
 	podfile.cleanupDir( pod.name, destDir, pod.nbOfSaveFiles )
+	# copy latest episode to special dir
+	if cfg.latestEpisodeDir != None:
+		podfile.updateLastEpisodeDir( pod.name, destDir, cfg.latestEpisodeDir )
