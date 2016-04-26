@@ -1,3 +1,6 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+
 from xml.dom import minidom
 from urllib2 import urlopen
 import podepisode
@@ -32,13 +35,13 @@ def getPodEpisodes( url ):
 def _getPodEpisodeContentUrl( enclosureElement ):
 	if enclosureElement.hasAttribute( "url" ) == False:
 		return None
-	result = enclosureElement.getAttribute( "url" ).encode( "utf-8" )
+	result = enclosureElement.getAttribute( "url" )
 	return result
 
 def _getPodEpisodeContentType( enclosureElement ):
 	if enclosureElement.hasAttribute( "type" ) == False:
 		return None
-	result = enclosureElement.getAttribute( "type" ).encode( "utf-8" )
+	result = enclosureElement.getAttribute( "type" )
 	return result
 
 def _getPodEpisodeTitle( titleElement ):
@@ -48,7 +51,7 @@ def _getPodEpisodeTitle( titleElement ):
 			result = child.data
 		elif child.nodeType == minidom.Node.CDATA_SECTION_NODE:
 			result = child.data
-	result = result.strip().encode( "utf-8" )
+	result = result.strip()
 	return result
 
 def _getPodEpisodePublishedTime( publishedElement ):
@@ -62,7 +65,7 @@ def _getPodEpisodePublishedTime( publishedElement ):
 def _getPodEpisode( rssItem ):
 
 	url = None
-	type = None
+	mimeType = None
 	title = None
 	publishedTime = None
 
@@ -73,12 +76,12 @@ def _getPodEpisode( rssItem ):
 		if element.nodeType == minidom.Node.ELEMENT_NODE: 
 			if element.tagName == "enclosure":
 				url = _getPodEpisodeContentUrl( element )
-				type = _getPodEpisodeContentType( element )
+				mimeType = _getPodEpisodeContentType( element )
 			if element.tagName == "title":
 				title = _getPodEpisodeTitle( element )
 			if element.tagName == "pubDate":
 				publishedTime = _getPodEpisodePublishedTime( element )
 
 	if url != None:
-		result = podepisode.Episode( title = title, url = url, type = type, publishedTime = publishedTime )
+		result = podepisode.Episode( title = title, url = url, type = mimeType, publishedTime = publishedTime )
 	return result

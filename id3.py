@@ -1,3 +1,6 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+
 from mutagen.easyid3 import EasyID3
 import os
 

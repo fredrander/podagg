@@ -1,3 +1,6 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+
 import tempfile
 import os
 import shutil
@@ -17,7 +20,7 @@ def download( episode, podName, podPath ):
 	
 	fileName = _generateFileName( episode, podName )
 	destFile = os.path.join( podPath, fileName )
-	print( "Save: {}".format( destFile ) )
+	print( u"Save: {}".format( destFile ) )
 	if _moveTemp( tmpFile, destFile ) != True:
 		return None
 	return destFile
@@ -29,7 +32,7 @@ def cleanupDir( podName, podPath, maxNbOfFiles ):
 	# find files from searched pod
 	podFiles = []
 	for f in allFiles:
-		if re.match( "^{}".format( podName ), f ):
+		if re.match( u"^{}".format( podName ), f ):
 			podFiles.append( f )
 	# sort descending and delete all files after maxNbOfFiles
 	podFiles.sort( reverse=True )
@@ -38,7 +41,7 @@ def cleanupDir( podName, podPath, maxNbOfFiles ):
 		cnt = cnt + 1
 		if cnt > maxNbOfFiles:
 			fileToDelete = os.path.join( podPath, sf )
-			print( "Delete: {}".format( fileToDelete ) )
+			print( u"Delete: {}".format( fileToDelete ) )
 			os.remove( fileToDelete )
 	
 ################################################################################
@@ -96,7 +99,7 @@ def _generateFileName( episode, podName ):
 	else:
 		pubDate = datetime.now()
 
-	dateStr = datetime.strftime( pubDate, "%Y%m%d" )
+	dateStr = datetime.strftime( pubDate, "%Y%m%d" ).decode( "utf-8" )
 	
 	ext = _getExtension( episode )
 

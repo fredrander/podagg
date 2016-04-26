@@ -1,3 +1,6 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+
 import os
 from collections import namedtuple
 
@@ -16,6 +19,10 @@ def getPodcasts( podListFile ):
 
 	result = []	
 	for line in lines:
+
+		# we want to handle strings in unicode	
+		line = line.decode( "utf-8" )
+		
 		# split on ;
 		if line[ 0 ] != '#':
 			# remove \n from end of line
