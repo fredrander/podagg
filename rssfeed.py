@@ -3,6 +3,7 @@
 
 from xml.dom import minidom
 import urllib2
+import urlparse
 import podepisode
 
 
@@ -35,7 +36,10 @@ def getPodEpisodes( url ):
 def _getPodEpisodeContentUrl( enclosureElement ):
 	if enclosureElement.hasAttribute( "url" ) == False:
 		return None
-	result = urllib2.quote( enclosureElement.getAttribute( "url" ) )
+	url = enclosureElement.getAttribute( "url" )
+	splitUrl = urlparse.urlsplit( url )
+	protStr = splitUrl[ 0 ] + "://"
+	result = protStr + urllib2.quote( url[ len(protStr): ] )
 	return result
 
 def _getPodEpisodeContentType( enclosureElement ):
