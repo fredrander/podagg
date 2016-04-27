@@ -60,7 +60,6 @@ def _getPodEpisodePublishedTime( publishedElement ):
 		if child.nodeType == minidom.Node.TEXT_NODE:
 			result = child.data
 	return result
-	
 
 def _getPodEpisode( rssItem ):
 

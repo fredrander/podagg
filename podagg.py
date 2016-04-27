@@ -51,6 +51,9 @@ for pod in pods:
 					# update ID3 tags of downloaded file
 					if cfg.updateId3:
 						id3.updateTags( downloadedFile, pod.name )
+				else:
+					print( "Download failed ({})".format( episode.url ) )
+
 	# remove pod files if too many in dir					
 	podfile.cleanupDir( pod.name, destDir, pod.nbOfSaveFiles )
 	# copy latest episode to special dir
