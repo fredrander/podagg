@@ -52,7 +52,7 @@ for pod in pods:
 					if cfg.updateId3:
 						id3.updateTags( downloadedFile, pod.name )
 				else:
-					print( "Download failed ({})".format( episode.url ) )
+					print( "Download failed" )
 
 	# remove pod files if too many in dir					
 	podfile.cleanupDir( pod.name, destDir, pod.nbOfSaveFiles )
