@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from xml.dom import minidom
-from urllib2 import urlopen
+import urllib2
 import podepisode
 
 
@@ -15,7 +15,7 @@ def getPodEpisodes( url ):
 	rsp = None
 	rssData = None
 	try:
-		rsp = urlopen( url )
+		rsp = urllib2.urlopen( url )
 		rssData = rsp.read()
 	except:
 		return None
@@ -35,7 +35,7 @@ def getPodEpisodes( url ):
 def _getPodEpisodeContentUrl( enclosureElement ):
 	if enclosureElement.hasAttribute( "url" ) == False:
 		return None
-	result = enclosureElement.getAttribute( "url" ).encode( "utf-8" )
+	result = urllib2.quote( enclosureElement.getAttribute( "url" ) )
 	return result
 
 def _getPodEpisodeContentType( enclosureElement ):
