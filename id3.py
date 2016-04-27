@@ -16,6 +16,9 @@ def updateTags( fullFileName, podName ):
 		id3Tag = EasyID3( fullFileName )
 	except:
 		id3Tag = mutagen.File( fullFileName, easy = True )
+		if id3Tag == None:
+			print( "Failed to create id3 tags" )
+			return
 		id3Tag.add_tags()
 
 	# extract file name without extension from full file name
