@@ -36,7 +36,7 @@ def getPodEpisodes( url ):
 def _getPodEpisodeContentUrl( enclosureElement ):
 	if enclosureElement.hasAttribute( "url" ) == False:
 		return None
-	url = enclosureElement.getAttribute( "url" )
+	url = enclosureElement.getAttribute( "url" ).encode( "utf-8" )
 	splitUrl = urlparse.urlsplit( url )
 	protStr = splitUrl[ 0 ] + "://"
 	result = protStr + urllib2.quote( url[ len(protStr): ] )
