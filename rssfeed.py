@@ -1,10 +1,11 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-from xml.dom import minidom
 import urllib2
 import urlparse
 import podepisode
+from xml.dom import minidom
+from datetime import datetime
 
 
 # returns an array with all episodes in pod
@@ -19,7 +20,7 @@ def getPodEpisodes( url ):
 		rsp = urllib2.urlopen( url )
 		rssData = rsp.read()
 	except:
-		return None
+		return result
 	
 	# parse xml
 	xmlDoc = minidom.parseString( rssData )
@@ -59,11 +60,27 @@ def _getPodEpisodeTitle( titleElement ):
 	return result
 
 def _getPodEpisodePublishedTime( publishedElement ):
-	result = None
+	elemStr = None
 	for child in publishedElement.childNodes:
 		if child.nodeType == minidom.Node.TEXT_NODE:
-			result = child.data
-	return result
+			elemStr = child.data
+
+	# parse publish time
+	pubDate = None
+	if elemStr != None and len( elemStr ) > 15:
+		# only interested in date (example of format (RFC822) Sun, 24 Apr 2016 16:03:00 GMT)
+		try:
+			tmpStr = elemStr[:16]
+			pubDate = datetime.strptime( tmpStr, "%a, %d %b %Y" )
+		except:
+			# incorrect date format
+			pubDate = None
+
+	if pubDate == None:
+		pubDate = datetime.now()
+
+	dateStr = datetime.strftime( pubDate, "%Y%m%d" ).decode( "utf-8" )
+	return dateStr
 
 def _getPodEpisode( rssItem ):
 

@@ -10,7 +10,7 @@ import config
 import id3
 import os
 import sys
-
+import operator
 
 # default config file path
 configFile = os.path.expanduser( "~/.podagg/config" )
@@ -36,23 +36,30 @@ for pod in pods:
 	# get list os all episodes in pod
 	episodes = rssfeed.getPodEpisodes( pod.url )
 
-	if episodes != None:
-		for episode in episodes:
+	# get list of episodes to download
+	episodesToDownload = []
+	for episode in episodes:
+		if history.exist( episode.url, cfg.history ) != True:
+			episodesToDownload.append( episode )
 
-			# check if already handled
-			if history.exist( episode.url, cfg.history ) != True:
-				# no, download
-				print( "Download: {}".format( episode.url ) )
-				downloadedFile = None				
-				downloadedFile = podfile.download( episode, pod.name, destDir )
-				if downloadedFile != None:
-					# add to history
-					history.add( episode.url, cfg.history )
-					# update ID3 tags of downloaded file
-					if cfg.updateId3:
-						id3.updateTags( downloadedFile, pod.name )
-				else:
-					print( "Download failed" )
+	# sort descending by publish date and title
+	episodesToDownload = sorted( episodesToDownload, key = operator.attrgetter( "publishedTime", "title" ), reverse = True )
+
+	# only download at max pod.nbOfSaveFiles episodes 
+	episodesToDownload = episodesToDownload[ : pod.nbOfSaveFiles ]
+	
+	for episode in episodesToDownload:
+		print( u"Download:\n {}\n {}\n {}\n {}".format( pod.name, episode.title, episode.publishedTime, episode.url ) )
+		downloadedFile = None				
+		downloadedFile = podfile.download( episode, pod.name, destDir )
+		if downloadedFile != None:
+			# add to history
+			history.add( episode.url, cfg.history )
+			# update ID3 tags of downloaded file
+			if cfg.updateId3:
+				id3.updateTags( downloadedFile, pod.name )
+		else:
+			print( "Download failed" )
 
 	# remove pod files if too many in dir					
 	podfile.cleanupDir( pod.name, destDir, pod.nbOfSaveFiles )

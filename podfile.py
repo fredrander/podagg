@@ -7,8 +7,8 @@ import shutil
 import urllib2
 import podepisode
 import re
-from datetime import datetime
 from mimetypes import MimeTypes
+
 
 # download podcast and save with correct name
 # returns full path and name of downloaded file, None if failure
@@ -123,31 +123,15 @@ def _getExtension( episode ):
 	return mimeExt
 
 def _generateFileName( episode, podName ):
-	pubDate = None
-	# use published time from RSS feed if exist, otherwise current date
-	if episode.publishedTime != None and len( episode.publishedTime ) > 15:
-		# only interested in date (example of format (RFC822) Sun, 24 Apr 2016 16:03:00 GMT)
-		try:
-			tmpStr = episode.publishedTime[:16]
-			pubDate = datetime.strptime( tmpStr, "%a, %d %b %Y" )
-		except:
-			# incorrect date format
-			pubDate = None
-
-	if pubDate == None:
-		pubDate = datetime.now()
-
-	dateStr = datetime.strftime( pubDate, "%Y%m%d" ).decode( "utf-8" )
-	
 	ext = _getExtension( episode )
 
 	result = None
 	if episode.title != None and len( episode.title ) > 0:
 		# remove forbidden file name chars. from title
-		titleStr = re.sub( "[\/\*\<\>\:\\\\]", "_", episode.title )
-		result = u"{} {} {}{}".format( podName, dateStr, titleStr, ext )
+		titleStr = re.sub( "[\/\*\<\>\\\\]", "_", episode.title )
+		result = u"{} {} {}{}".format( podName, episode.publishedTime, titleStr, ext )
 	else:
-		result = u"{} {}{}".format( podName, dateStr, ext ) 
+		result = u"{} {}{}".format( podName, episode.publishedTime, ext ) 
 	return result
 
 def _moveTemp( tmp, to ):
