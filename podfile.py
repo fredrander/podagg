@@ -150,6 +150,7 @@ def _moveTemp( tmp, to ):
 	try:
 		shutil.copy( tmp, dest )
 		os.remove( tmp )
+		os.chmod( dest, 0644 )
 		return True
 	except:
 		return False
