@@ -52,7 +52,7 @@ for pod in pods:
 	episodeCnt = 0
 	for episode in episodesToDownload:
 		episodeCnt = episodeCnt + 1
-		print( u"Download Pod: {}/{}, Episode: {}/{}:\n {}\n {}\n {}\n {}".format( podCnt, len( pods ), episodeCnt, len( episodesToDownload ), pod.name, episode.title, episode.publishedTime, episode.url ) )
+		print( u"Download (Pod: {}/{}, Episode: {}/{}):\n {}\n {}\n {}\n {}".format( podCnt, len( pods ), episodeCnt, len( episodesToDownload ), pod.name, episode.title, episode.publishedTime, episode.url ) )
 		downloadedFile = None				
 		downloadedFile = podfile.download( episode, pod.name, destDir )
 		if downloadedFile != None:
