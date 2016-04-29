@@ -25,8 +25,10 @@ cfg = config.getConfig( configFile )
 
 # get all configured podcasts
 pods = podlist.getPodcasts( cfg.podlist )
-
+podCnt = 0
 for pod in pods:
+
+	podCnt = podCnt + 1
 
 	# append podcast name to download dir. if config separateDirs = True
 	destDir = cfg.downloadPath
@@ -49,8 +51,8 @@ for pod in pods:
 	episodesToDownload = episodesToDownload[ : pod.nbOfSaveFiles ]
 	cnt = 0
 	for episode in episodesToDownload:
-		cnt = cnt + 1
-		print( u"Download ({}/{}):\n {}\n {}\n {}\n {}".format( cnt, len( episodesToDownload ), pod.name, episode.title, episode.publishedTime, episode.url ) )
+		episodeCnt = episodeCnt + 1
+		print( u"Download Pod: {}/{}, Episode: {}/{}:\n {}\n {}\n {}\n {}".format( podCnt, len( pods ), episodeCnt, len( episodesToDownload ), pod.name, episode.title, episode.publishedTime, episode.url ) )
 		downloadedFile = None				
 		downloadedFile = podfile.download( episode, pod.name, destDir )
 		if downloadedFile != None:
