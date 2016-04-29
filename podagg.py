@@ -47,9 +47,10 @@ for pod in pods:
 
 	# only download at max pod.nbOfSaveFiles episodes 
 	episodesToDownload = episodesToDownload[ : pod.nbOfSaveFiles ]
-	
+	cnt = 0
 	for episode in episodesToDownload:
-		print( u"Download:\n {}\n {}\n {}\n {}".format( pod.name, episode.title, episode.publishedTime, episode.url ) )
+		cnt = cnt + 1
+		print( u"Download ({}/{}):\n {}\n {}\n {}\n {}".format( cnt, len( episodesToDownload ), pod.name, episode.title, episode.publishedTime, episode.url ) )
 		downloadedFile = None				
 		downloadedFile = podfile.download( episode, pod.name, destDir )
 		if downloadedFile != None:
