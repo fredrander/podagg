@@ -4,6 +4,7 @@
 from mutagen.easyid3 import EasyID3
 import mutagen
 import os
+import syslog
 
 
 # update ID3 tag with filename as title and podName as artist
@@ -17,7 +18,7 @@ def updateTags( fullFileName, podName ):
 	except:
 		id3Tag = mutagen.File( fullFileName, easy = True )
 		if id3Tag == None:
-			print( "Failed to create id3 tags" )
+			syslog.syslog( syslog.LOG_ERR, "Failed to create id3 tags" )
 			return
 		id3Tag.add_tags()
 

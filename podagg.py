@@ -11,6 +11,10 @@ import id3
 import os
 import sys
 import operator
+import syslog
+
+
+syslog.syslog( syslog.LOG_INFO, "Start" )
 
 # default config file path
 configFile = os.path.expanduser( "~/.podagg/config" )
@@ -18,13 +22,12 @@ configFile = os.path.expanduser( "~/.podagg/config" )
 if len( sys.argv ) > 1:
 	configFile = sys.argv[ 1 ]
 
-print( "Config file: {}".format( configFile ) )
-
 # read config
 cfg = config.getConfig( configFile )
 
 # get all configured podcasts
 pods = podlist.getPodcasts( cfg.podlist )
+
 podCnt = 0
 for pod in pods:
 
@@ -50,9 +53,10 @@ for pod in pods:
 	# only download at max pod.nbOfSaveFiles episodes 
 	episodesToDownload = episodesToDownload[ : pod.nbOfSaveFiles ]
 	episodeCnt = 0
+
 	for episode in episodesToDownload:
 		episodeCnt = episodeCnt + 1
-		print( u"Download (Pod: {}/{}, Episode: {}/{}):\n {}\n {}\n {}\n {}".format( podCnt, len( pods ), episodeCnt, len( episodesToDownload ), pod.name, episode.title, episode.publishedTime, episode.url ) )
+		syslog.syslog( syslog.LOG_INFO, u"Download, pod: {}/{}, episode: {}/{}".format( podCnt, len( pods ), episodeCnt, len( episodesToDownload ) ) )
 		downloadedFile = None				
 		downloadedFile = podfile.download( episode, pod.name, destDir )
 		if downloadedFile != None:
@@ -62,10 +66,13 @@ for pod in pods:
 			if cfg.updateId3:
 				id3.updateTags( downloadedFile, pod.name )
 		else:
-			print( "Download failed" )
+			syslog.syslog( syslog.LOG_ERR, "Download failed" )
 
 	# remove pod files if too many in dir					
 	podfile.cleanupDir( pod.name, destDir, pod.nbOfSaveFiles )
 	# copy latest episode to special dir
 	if cfg.latestEpisodeDir != None:
 		podfile.updateLastEpisodeDir( pod.name, destDir, cfg.latestEpisodeDir )
+
+syslog.syslog( syslog.LOG_INFO, "Done" )
+

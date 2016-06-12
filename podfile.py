@@ -20,7 +20,6 @@ def download( episode, podName, podPath ):
 	
 	fileName = _generateFileName( episode, podName )
 	destFile = os.path.join( podPath, fileName )
-	print( u"Save: {}".format( destFile ) )
 	if _moveTemp( tmpFile, destFile ) != True:
 		return None
 	return destFile
@@ -36,7 +35,6 @@ def cleanupDir( podName, podPath, maxNbOfFiles ):
 		cnt = cnt + 1
 		if cnt > maxNbOfFiles:
 			fileToDelete = os.path.join( podPath, sf )
-			print( u"Delete: {}".format( fileToDelete ) )
 			os.remove( fileToDelete )
 	
 # update last episode dir. with latest episode for a pod
