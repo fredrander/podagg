@@ -1,5 +1,4 @@
 #!/usr/bin/python
-# -*- coding: utf-8 -*-
 
 import tempfile
 import os
@@ -61,7 +60,7 @@ def updateLastEpisodeDir( podName, podPath, lastEpisodeDir ):
 	# delete file(s) in last episode dir if not correct file
 	alreadyLatest = False
 	for f in lastFiles:
-		uf = f.decode( "utf-8" )
+		uf = f
 		if uf == lastSourceFile:
 			# latest file already in dir
 			alreadyLatest = True
@@ -84,7 +83,7 @@ def _downloadTemp( episode ):
 	
 	# create a temp file, returns a tuple ( file handle, file name )
 	tmpFile = tempfile.mkstemp()
-
+	
 	# open url	
 	rsp = None
 	try:
@@ -127,9 +126,9 @@ def _generateFileName( episode, podName ):
 	if episode.title != None and len( episode.title ) > 0:
 		# remove forbidden file name chars. from title
 		titleStr = re.sub( "[\/\*\<\>\\\\]", "_", episode.title )
-		result = u"{} {} {}{}".format( podName, episode.publishedTime, titleStr, ext )
+		result = "{} {} {}{}".format( podName, episode.publishedTime, titleStr, ext )
 	else:
-		result = u"{} {}{}".format( podName, episode.publishedTime, ext ) 
+		result = "{} {}{}".format( podName, episode.publishedTime, ext ) 
 	return result
 
 def _moveTemp( tmp, to ):
@@ -138,7 +137,7 @@ def _moveTemp( tmp, to ):
 	cnt = 1
 	while os.path.isfile( dest ):
 		splitPath = os.path.splitext( to )
-		dest = u"{}_{}{}".format( splitPath[ 0 ], cnt, splitPath[ 1 ] )
+		dest = "{}_{}{}".format( splitPath[ 0 ], cnt, splitPath[ 1 ] )
 		cnt = cnt + 1
 		
 	# create destination path if missing
@@ -162,6 +161,6 @@ def _allFilesFromPodInDir( dir, podName ):
 	allFiles = os.listdir( dir )
 	# find files from searched pod
 	for f in allFiles:
-		if re.match( u"^{}".format( podName ), f ):
+		if re.match( "^{}".format( podName ), f ):
 			podFiles.append( f )
 	return podFiles

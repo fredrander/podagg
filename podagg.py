@@ -1,5 +1,4 @@
 #!/usr/bin/python
-# -*- coding: utf-8 -*-
 
 import rssfeed
 import podepisode
@@ -56,7 +55,9 @@ for pod in pods:
 
 	for episode in episodesToDownload:
 		episodeCnt = episodeCnt + 1
-		syslog.syslog( syslog.LOG_INFO, u"Download, pod: {}/{}, episode: {}/{}".format( podCnt, len( pods ), episodeCnt, len( episodesToDownload ) ) )
+		syslog.syslog( syslog.LOG_INFO, "Download, pod: \"{}\" ({}/{}), episode: \"{}\" ({}/{})".format( 
+			pod.name, podCnt, len( pods ), episode.title, episodeCnt, 
+			len( episodesToDownload ) ) )
 		downloadedFile = None				
 		downloadedFile = podfile.download( episode, pod.name, destDir )
 		if downloadedFile != None:

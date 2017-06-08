@@ -1,5 +1,4 @@
 #!/usr/bin/python
-# -*- coding: utf-8 -*-
 
 import urllib2
 import urlparse
@@ -37,10 +36,10 @@ def getPodEpisodes( url ):
 def _getPodEpisodeContentUrl( enclosureElement ):
 	if enclosureElement.hasAttribute( "url" ) == False:
 		return None
-	url = enclosureElement.getAttribute( "url" ).encode( "utf-8" )
+	url = enclosureElement.getAttribute( "url" )
 	splitUrl = urlparse.urlsplit( url )
 	protStr = splitUrl[ 0 ] + "://"
-	result = protStr + urllib2.quote( url[ len(protStr): ] )
+	result = protStr + urllib2.quote( url[ len(protStr): ].encode( 'utf-8' ) )
 	return result
 
 def _getPodEpisodeContentType( enclosureElement ):
@@ -57,7 +56,7 @@ def _getPodEpisodeTitle( titleElement ):
 		elif child.nodeType == minidom.Node.CDATA_SECTION_NODE:
 			result = child.data
 	result = result.strip()
-	return result
+	return result.encode( 'utf-8' )
 
 def _getPodEpisodePublishedTime( publishedElement ):
 	elemStr = None
@@ -79,7 +78,7 @@ def _getPodEpisodePublishedTime( publishedElement ):
 	if pubDate == None:
 		pubDate = datetime.now()
 
-	dateStr = datetime.strftime( pubDate, "%Y%m%d" ).decode( "utf-8" )
+	dateStr = datetime.strftime( pubDate, "%Y%m%d" )
 	return dateStr
 
 def _getPodEpisode( rssItem ):

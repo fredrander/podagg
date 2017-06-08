@@ -1,5 +1,4 @@
 #!/usr/bin/python
-# -*- coding: utf-8 -*-
 
 from mutagen.easyid3 import EasyID3
 import mutagen
@@ -26,7 +25,7 @@ def updateTags( fullFileName, podName ):
 	fileName = os.path.split( fullFileName )[ 1 ]
 	title = os.path.splitext( fileName )[ 0 ]
 
-	id3Tag[ "title" ] = u"{}".format( title )
-	id3Tag[ "artist" ] = u"{}".format( podName )
+	id3Tag[ "title" ] = unicode("{}".format( title ), "utf-8")
+	id3Tag[ "artist" ] = unicode("{}".format( podName ), "utf-8")
 
 	id3Tag.save()
